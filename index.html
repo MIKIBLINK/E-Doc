@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>E-DOC by Brainstorm Company</title>
+    <!-- Tailwind CSS CDN for utility-first styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Tailwind CSS configuration for custom theme colors and font
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // Custom primary blue color
+                        primary: "#2563EB",
+                        // Custom secondary green color
+                        secondary: "#10B981",
+                        // Custom light gray background color
+                        lightGray: "#F3F4F6",
+                        // Darker gray for text
+                        darkGray: "#374151",
+                        // Medium gray for subtle text
+                        mediumGray: "#6B7280",
+                    },
+                    fontFamily: {
+                        // Setting 'Inter' as the default sans-serif font
+                        sans: ["Inter", "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        /* Custom CSS for smooth scrolling behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Basic styling for the back-to-top button */
+        #back-to-top {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            /* Fixed position */
+            bottom: 20px;
+            /* 20px from the bottom */
+            right: 20px;
+            /* 20px from the right */
+            z-index: 99;
+            /* High z-index to be on top */
+            border: none;
+            /* No border */
+            outline: none;
+            /* No outline */
+            background-color: #2563EB;
+            /* Primary color background */
+            color: white;
+            /* White text */
+            cursor: pointer;
+            /* Pointer cursor on hover */
+            padding: 15px;
+            /* Padding inside the button */
+            border-radius: 50%;
+            /* Circular shape */
+            font-size: 18px;
+            /* Icon size */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            /* Subtle shadow */
+            transition: background-color 0.3s, transform 0.3s;
+            /* Smooth transitions */
+        }
+
+        #back-to-top:hover {
+            background-color: #1D4ED8;
+            /* Darker blue on hover */
+            transform: translateY(-3px);
+            /* Slight lift on hover */
+        }
+
+        /* Modal specific styles */
+        .modal {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            /* Stay in place */
+            z-index: 1000;
+            /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            /* Full width */
+            height: 100%;
+            /* Full height */
+            overflow: auto;
+            /* Enable scroll if needed */
+            background-color: rgba(0, 0, 0, 0.6);
+            /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="font-sans text-darkGray bg-white">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-md fixed w-full z-50 top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
+            <!-- Logo/Brand Name -->
+            <a href="#" class="flex items-center space-x-2 text-primary text-2xl font-bold rounded-md">
+                <img src="/logo.jpg" alt="E-DOC Logo" class="w-8 h-8">
+                <span>E-DOC</span>
+            </a>
+
+            <!-- Navigation Links (Hidden on small screens, shown on medium and up) -->
+            <div class="hidden md:flex space-x-8">
+                <a href="#home" class="text-mediumGray hover:text-primary transition font-medium">Home</a>
+                <a href="#services" class="text-mediumGray hover:text-primary transition font-medium">Services</a>
+                <a href="#how-it-works" class="text-mediumGray hover:text-primary transition font-medium">How It
+                    Works</a>
+                <a href="#why-choose-us" class="text-mediumGray hover:text-primary transition font-medium">Why Choose
+                    Us</a>
+                <a href="#testimonials"
+                    class="text-mediumGray hover:text-primary transition font-medium">Testimonials</a>
+                <a href="#appointment" class="text-mediumGray hover:text-primary transition font-medium">Appointment</a>
+            </div>
+
+            <!-- Mobile Menu Button (Hamburger Icon) -->
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-darkGray hover:text-primary focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-2 shadow-lg">
+            <a href="#home" class="block px-4 py-2 text-darkGray hover:bg-lightGray transition">Home</a>
+            <a href="#services" class="block px-4 py-2 text-darkGray hover:bg-lightGray transition">Services</a>
+            <a href="#how-it-works" class="block px-4 py-2 text-darkGray hover:bg-lightGray transition">How It
+                Works</a>
+            <a href="#why-choose-us" class="block px-4 py-2 text-darkGray hover:bg-lightGray transition">Why Choose
+                Us</a>
+            <a href="#testimonials" class="block px-4 py-2 text-darkGray hover:bg-lightGray transition">Testimonials</a>
+            <a href="#appointment" class="block px-4 py-2 text-darkGray hover:bg-lightGray transition">Appointment</a>
+        </div>
+    </nav>
+
+    <!-- Header / Hero Section -->
+    <section id="home" class="bg-primary text-white py-32 text-center relative overflow-hidden mt-16">
+        <!-- Abstract background shapes for visual interest -->
+
+        <div class="absolute inset-0 bg-cover bg-center opacity-50"
+            style="background-image: url('https://privategpclinic.co.uk/wp-content/uploads/bfi_thumb/private-gp-appointments-sunningdale-q5kx33154fqtunr41rqrvyf64o1ny04b27p83ehqc4.jpg');">
+            <img src="https://privategpclinic.co.uk/wp-content/uploads/bfi_thumb/private-gp-appointments-sunningdale-q5kx33154fqtunr41rqrvyf64o1ny04b27p83ehqc4.jpg"
+                alt="">
+        </div>
+        <div class="max-w-5xl mx-auto px-6 relative z-10">
+            <h1 class="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">Your Virtual Doctor. <br
+                    class="hidden sm:inline">Reliable, Affordable, Anytime.</h1>
+            <p class="text-lg md:text-xl mb-8 opacity-90">Experience healthcare reimagined with E-DOC. Connect with
+                certified doctors from the comfort of your home.</p>
+            <button onclick="document.getElementById('appointment').scrollIntoView({ behavior: 'smooth' })"
+                class="bg-secondary px-8 py-4 rounded-full font-semibold text-lg hover:bg-green-600 transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg hover:shadow-xl">
+                Book Appointment Today
+            </button>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-20 bg-lightGray">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-14">Our Comprehensive Services</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Service Card 1 -->
+                <div
+                    class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 flex flex-col items-center text-center">
+                    <div class="bg-primary/10 text-primary p-4 rounded-full mb-6">
+                        <i class="fa-solid fa-user-doctor text-3xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-xl mb-3">Online Consultation</h3>
+                    <p class="text-mediumGray text-base leading-relaxed">Talk to certified doctors via secure video
+                        calls, available 24/7 from anywhere.</p>
+                </div>
+                <!-- Service Card 2 -->
+                <div
+                    class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 flex flex-col items-center text-center">
+                    <div class="bg-primary/10 text-primary p-4 rounded-full mb-6">
+                        <i class="fa-solid fa-heart-pulse text-3xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-xl mb-3">Preventative Health Check-Up</h3>
+                    <p class="text-mediumGray text-base leading-relaxed">Access routine and advanced health screening
+                        packages tailored to your needs.</p>
+                </div>
+                <!-- Service Card 3 -->
+                <div
+                    class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 flex flex-col items-center text-center">
+                    <div class="bg-primary/10 text-primary p-4 rounded-full mb-6">
+                        <i class="fa-solid fa-stethoscope text-3xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-xl mb-3">Specialist Booking</h3>
+                    <p class="text-mediumGray text-base leading-relaxed">Effortlessly book appointments with top medical
+                        specialists across various fields in Cambodia.</p>
+                </div>
+                <!-- Service Card 4 -->
+                <div
+                    class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 flex flex-col items-center text-center">
+                    <div class="bg-primary/10 text-primary p-4 rounded-full mb-6">
+                        <i class="fa-solid fa-brain text-3xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-xl mb-3">Mental Health Support</h3>
+                    <p class="text-mediumGray text-base leading-relaxed">Receive confidential therapy and mental
+                        wellness services from compassionate professionals.</p>
+                </div>
+                <!-- Service Card 5 -->
+                <div
+                    class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 flex flex-col items-center text-center">
+                    <div class="bg-primary/10 text-primary p-4 rounded-full mb-6">
+                        <i class="fa-solid fa-mobile-screen-button text-3xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-xl mb-3">Telemedicine</h3>
+                    <p class="text-mediumGray text-base leading-relaxed">Get diagnosed and treated for common conditions
+                        without ever leaving your home.</p>
+                </div>
+                <!-- Service Card 6 (New Service Example) -->
+                <div
+                    class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 flex flex-col items-center text-center">
+                    <div class="bg-primary/10 text-primary p-4 rounded-full mb-6">
+                        <i class="fa-solid fa-pills text-3xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-xl mb-3">Prescription Delivery</h3>
+                    <p class="text-mediumGray text-base leading-relaxed">Receive your prescribed medications delivered
+                        directly to your doorstep.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-20">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold mb-14">Simple Steps to Better Health</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-left relative">
+                <!-- Decorative line connecting steps (desktop only) -->
+                <div
+                    class="hidden md:block absolute top-1/4 left-0 right-0 h-1 bg-lightGray -z-10 mx-auto w-[calc(100%-200px)]">
+                </div>
+
+                <!-- Step 1 -->
+                <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                    <div
+                        class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-3xl font-bold mb-4 shadow-md">
+                        1
+                    </div>
+                    <h4 class="font-bold text-2xl mb-2">Create Your Account</h4>
+                    <p class="text-mediumGray text-base leading-relaxed">Sign up for free in just a few clicks to access
+                        our full range of services.</p>
+                </div>
+                <!-- Step 2 -->
+                <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                    <div
+                        class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-3xl font-bold mb-4 shadow-md">
+                        2
+                    </div>
+                    <h4 class="font-bold text-2xl mb-2">Find Your Doctor</h4>
+                    <p class="text-mediumGray text-base leading-relaxed">Browse profiles, specialties, and availability
+                        to choose the perfect doctor for you.</p>
+                </div>
+                <!-- Step 3 -->
+                <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                    <div
+                        class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-3xl font-bold mb-4 shadow-md">
+                        3
+                    </div>
+                    <h4 class="font-bold text-2xl mb-2">Start Your Consultation</h4>
+                    <p class="text-mediumGray text-base leading-relaxed">Connect instantly via secure video call and get
+                        professional medical advice.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us Section -->
+    <section id="why-choose-us" class="bg-secondary text-white py-20">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold mb-10">Why E-DOC is Your Best Choice</h2>
+            <ul class="space-y-5 text-xl leading-relaxed">
+                <li class="flex items-center justify-center md:justify-start">
+                    <i class="fa-solid fa-circle-check text-2xl mr-4 text-green-200"></i>
+                    <span>Affordable plans starting from just <span class="font-bold">$5</span>.</span>
+                </li>
+                <li class="flex items-center justify-center md:justify-start">
+                    <i class="fa-solid fa-circle-check text-2xl mr-4 text-green-200"></i>
+                    <span><span class="font-bold">24/7 availability</span> with instant access to care.</span>
+                </li>
+                <li class="flex items-center justify-center md:justify-start">
+                    <i class="fa-solid fa-circle-check text-2xl mr-4 text-green-200"></i>
+                    <span>Your data is <span class="font-bold">secure, encrypted, and private</span>.</span>
+                </li>
+                <li class="flex items-center justify-center md:justify-start">
+                    <i class="fa-solid fa-circle-check text-2xl mr-4 text-green-200"></i>
+                    <span>Multilingual support available in <span class="font-bold">Khmer & English</span>.</span>
+                </li>
+                <li class="flex items-center justify-center md:justify-start">
+                    <i class="fa-solid fa-circle-check text-2xl mr-4 text-green-200"></i>
+                    <span>Connect only with <span class="font-bold">verified Cambodian doctors</span>.</span>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-20 bg-lightGray">
+        <div class="max-w-4xl mx-auto px-6">
+            <h2 class="text-4xl font-bold mb-10 text-center">What Our Patients Say</h2>
+            <div class="bg-white shadow-xl p-8 rounded-xl text-center border-t-4 border-primary">
+                <p class="italic text-lg text-gray-700 mb-6 leading-relaxed">
+                    "E-DOC has revolutionized my healthcare experience. The consultations are quick, incredibly
+                    reliable, and the doctors are genuinely helpful. I didn’t expect this level of professional service
+                    online!"
+                </p>
+                <div class="flex items-center justify-center mb-4">
+                    <!-- Placeholder image for avatar -->
+                    <img src="https://placehold.co/60x60/2563EB/FFFFFF?text=S" alt="Sopheak's Avatar"
+                        class="rounded-full mr-4 border-2 border-primary">
+                    <div>
+                        <p class="font-bold text-xl text-primary">Sopheak</p>
+                        <p class="text-mediumGray text-sm">Phnom Penh, Cambodia</p>
+                    </div>
+                </div>
+                <div class="text-yellow-500 text-xl">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                        class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact / Appointment Section -->
+    <section id="appointment" class="py-20">
+        <div class="max-w-2xl mx-auto px-6">
+            <h2 class="text-4xl font-bold mb-10 text-center">Book Your Appointment</h2>
+            <div class="bg-white p-8 rounded-xl shadow-xl border-t-4 border-secondary">
+                <p class="text-mediumGray text-center mb-6">Fill out the form below to schedule your virtual
+                    consultation. We'll get back to you shortly!</p>
+                <form id="appointment-form" class="space-y-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-darkGray mb-2">Your Name</label>
+                        <input type="text" id="name" name="name" placeholder="John Doe" required
+                            class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" />
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-darkGray mb-2">Your Email</label>
+                        <input type="email" id="email" name="email" placeholder="john.doe@example.com" required
+                            class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" />
+                    </div>
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-darkGray mb-2">Phone Number
+                            (Optional)</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+855 12 345 678"
+                            class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200" />
+                    </div>
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-darkGray mb-2">Your Message /
+                            Symptoms</label>
+                        <textarea id="message" name="message"
+                            placeholder="Describe your symptoms or reason for appointment..." required
+                            class="w-full p-4 border border-gray-300 rounded-lg h-36 focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 resize-y"></textarea>
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-primary text-white p-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105 shadow-md hover:shadow-lg">
+                        Send Appointment Request
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-darkGray text-white text-center py-10">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+                <div class="mb-4 md:mb-0">
+                    <a href="#" class="flex items-center space-x-2 text-white text-2xl font-bold">
+                        <img src="/logo.jpg" alt="E-DOC Logo" class="w-8 h-8">
+                        <span>E-DOC</span>
+                    </a>
+                </div>
+                <div class="flex space-x-6 text-2xl">
+
+                    <a href="https://t.me/BRAINSTORM_EDOC"><i class="fab fa-telegram"></i></a>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-6 text-mediumGray text-sm">
+                <p>&copy; 2025 E-DOC by Brainstorm Company. All rights reserved.</p>
+                <p class="mt-2">Designed with care in Cambodia.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" title="Go to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Success/Error Modal -->
+    <div id="statusModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div id="modal-icon" class="text-5xl mb-4"></div>
+            <h3 id="modal-title" class="text-2xl font-bold mb-3"></h3>
+            <p id="modal-message" class="text-mediumGray text-lg"></p>
+            <button id="modal-close-btn"
+                class="mt-6 bg-primary text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function () {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // JavaScript for smooth scrolling when clicking navigation links
+        document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    // Get the height of the fixed navigation bar
+                    const navHeight = document.querySelector('nav').offsetHeight;
+                    // Calculate the scroll position, accounting for the nav bar
+                    const offsetTop = targetElement.getBoundingClientRect().top + window.pageYOffset - navHeight;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                    // Close mobile menu after clicking a link
+                    document.getElementById('mobile-menu').classList.add('hidden');
+                }
+            });
+        });
+
+        // JavaScript for Back to Top button functionality
+        const backToTopButton = document.getElementById('back-to-top');
+
+        window.addEventListener('scroll', () => {
+            // Show button when scrolled down 300px, otherwise hide
+            if (window.pageYOffset > 300) {
+                backToTopButton.style.display = 'block';
+            } else {
+                backToTopButton.style.display = 'none';
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // JavaScript for handling the appointment form submission and modal
+        const appointmentForm = document.getElementById('appointment-form');
+        const statusModal = document.getElementById('statusModal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        const modalIcon = document.getElementById('modal-icon');
+        const closeButtons = document.querySelectorAll('.close-button, #modal-close-btn');
+
+        // Function to show the modal with dynamic content
+        function showModal(title, message, isSuccess) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            modalIcon.innerHTML = isSuccess ? '<i class="fas fa-check-circle text-secondary"></i>' : '<i class="fas fa-times-circle text-red-500"></i>';
+            statusModal.style.display = 'flex'; // Use flex to center content
+        }
+
+        // Function to hide the modal
+        function hideModal() {
+            statusModal.style.display = 'none';
+        }
+
+        // Add event listeners to close buttons
+        closeButtons.forEach(button => {
+            button.addEventListener('click', hideModal);
+        });
+
+        // Close modal if user clicks outside of it
+        window.addEventListener('click', (event) => {
+            if (event.target === statusModal) {
+                hideModal();
+            }
+        });
+
+        // Handle form submission
+        appointmentForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent default form submission
+
+            const formData = new FormData(appointmentForm);
+            const data = Object.fromEntries(formData.entries());
+
+            // Simulate an API call (replace with actual fetch to your backend if available)
+            // In a real application, you would send this data to a server, e.g., using fetch API.
+            // Since `telegram.php` is not a valid endpoint in this environment, we simulate success/failure.
+            try {
+                // Simulate network delay
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                // Simulate a successful response
+                console.log('Form data submitted:', data);
+                showModal('Appointment Request Sent!', 'Thank you for your request. We will contact you shortly to confirm your appointment.', true);
+                appointmentForm.reset(); // Clear the form after successful submission
+            } catch (error) {
+                // Simulate an error response
+                console.error('Form submission error:', error);
+                showModal('Submission Failed', 'There was an error sending your request. Please try again later.', false);
+            }
+        });
+    </script>
+</body>
+
+</html>
